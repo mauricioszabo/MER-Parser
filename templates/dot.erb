@@ -1,0 +1,24 @@
+digraph mer {
+	graph[overlap=false, splines=true]
+
+<% @modelos.each do |modelo| %>
+	"<%= modelo.nome %>" [shape=Mrecord, fontsize=10, label="{<%= modelo.nome %>|<%= modelo.atributos.join("\\l") %>}"]
+<% end %>
+
+	edge [len="2"]
+<%
+  def figura(card)
+    if(card == '1')
+      'otee'
+    else
+      'crow'
+    end
+  end
+  
+@relacionamentos.each do |relacionamento| %>
+	"<%= relacionamento.direita.nome %>" -> "<%= relacionamento.esquerda.nome %>" [arrowtail=<%= 
+  figura(relacionamento.direita.cardinalidade) %>, arrowhead=<%= 
+  figura(relacionamento.esquerda.cardinalidade) %>, dir=both, fontsize=10 label="<%= 
+  relacionamento.texto %>"]
+<% end %>
+}

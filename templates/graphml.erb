@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:y="http://www.yworks.com/xml/graphml" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.0/ygraphml.xsd">
+  <!--Created by yFiles for Java 2.7-->
+  <key for="graphml" id="d0" yfiles.type="resources"/>
+  <key attr.name="url" attr.type="string" for="node" id="d1"/>
+  <key attr.name="description" attr.type="string" for="node" id="d2">
+    <default/>
+  </key>
+  <key for="node" id="d3" yfiles.type="nodegraphics"/>
+  <key attr.name="url" attr.type="string" for="edge" id="d4"/>
+  <key attr.name="description" attr.type="string" for="edge" id="d5">
+    <default/>
+  </key>
+  <key for="edge" id="d6" yfiles.type="edgegraphics"/>
+  <graph edgedefault="directed" id="G">
+    <% @modelos.each do |modelo| %>
+    <node id="<%= modelo.nome.gsub('"', '') %>">
+      <data key="d3">
+        <y:UMLClassNode>
+          <y:Geometry width="<%= 9 * ((modelo.atributos + [modelo.nome]).max_by { |a| a.size }.size) %>" 
+            height="<%= 16 * (modelo.atributos.size + 2) %>" x="0" y="0"/>
+
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="13" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="19.12646484375" modelName="internal" modelPosition="c" textColor="#000000" visible="true" width="47.44970703125" x="21.775146484375" y="3.0"><%= modelo.nome %></y:NodeLabel>
+          <y:UML clipContent="true" constraint="" omitDetails="false" stereotype="" use3DEffect="true">
+            <y:AttributeLabel><%= modelo.atributos.select { |x| x.strip !~ /\)$/ }.join("\n") %></y:AttributeLabel>
+            <y:MethodLabel><%= modelo.atributos.select { |x| x.strip =~ /\)$/ }.join("\n") %></y:MethodLabel>
+          </y:UML>
+        </y:UMLClassNode>
+      </data>
+    </node>
+    <% end %>
+
+<% 
+  def figura(card)
+    if(card == '1')
+      'none'
+    else
+      'white_diamond'
+    end
+  end
+%>
+
+    <% @relacionamentos.each_with_index do |rel, i| %>
+    <edge id="e<%= i %>" source="<%= rel.esquerda.nome %>" target="<%= rel.direita.nome %>">
+      <data key="d6">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="<%= figura(rel.esquerda.cardinalidade) %>" target="<%= figura(rel.direita.cardinalidade)%>"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <% end %>
+  </graph>
+  <data key="d0">
+    <y:Resources/>
+  </data>
+</graphml>

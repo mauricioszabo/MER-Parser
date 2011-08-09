@@ -1,0 +1,38 @@
+Parser para montar diagramas de entidade relacionamento.
+
+Assim como muita gente, na faculdade eu fazia trocadilhos com o modelo entidade-relacionamento
+(MER, imaginem o que quiserem). Chato de fazer, os programas para fazê-lo são burocráticos, e bom,
+com Ruby e Rails acabou ficando mais fácil fazer a tabela do que o diagrama então, por quê?
+
+O problema é que, muitas vezes, visualizar graficamente uma coisa é mais inspirador do que 
+visualizar um monte de linhas SQL (ou mesmo o schema.rb do Rails). Então, surgiu esse parser.
+
+A idéia: a partir de um formato muito simples, como eu escrevia numa folha de papel:
+
+Person:
+  +id
+  +name
+  age
+  something_else
+
+Buy:
+  +id
+  +product_id
+  +person_id
+
+Product:
+  +id
+  +name
+  description
+  review
+
+
+Person 1-n Buy
+Product 1-n Buy
+
+
+Poder gerar um arquivo que possa ser aberto em algum programa. Por hora, estou suportando os
+arquivos DOT (Graphviz, do Linux), e os arquivos .GML e .GRAPHML, ambos do ótimo sistema yED
+(http://www.yworks.com/products/yed/). O parser não faz o roteamento dos nós, deixando isso a
+cargo do programa usado, e como o formato é bem simples, também não traz nenhum tipo de erro
+de parsing.

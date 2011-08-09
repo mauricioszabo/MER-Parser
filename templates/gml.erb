@@ -1,0 +1,58 @@
+Creator	"parse.rb"
+Version	"2.7"
+graph
+[
+	hierarchic	1
+	label	""
+	directed	1
+  <% @modelos.each do |modelo| %>
+	node
+	[
+		id	"<%= modelo.nome %>"
+		label	"<%= modelo.nome %>
+<%= '-' * modelo.nome.size %>
+<%= modelo.atributos.join("\n") %>
+"
+		graphics
+		[
+			x	414.0
+			y	120.5
+			w	<%= 7 * ((modelo.atributos + [modelo.nome]).max_by { |a| a.size }.size + 1) %>
+			h	<%= 16 * (modelo.atributos.size + 2) %>
+			type	"rectangle"
+			fill	"#FFCC00"
+			outline	"#000000"
+		]
+    LabelGraphics [
+      fontSize  12
+      fontName  "Dialog"
+      alignment "left"
+      anchor  "tl"
+    ]
+	]
+  <% end %>
+
+<% 
+  def figura(card)
+    if(card == '1')
+      'dash'
+    else
+      'concave'
+    end
+  end
+
+@relacionamentos.each do |relacionamento| %>
+	edge
+	[
+		source	"<%= relacionamento.esquerda.nome %>"
+		target	"<%= relacionamento.direita.nome %>"
+		graphics
+		[
+			fill	"#000000"
+			sourceArrow	"<%= figura relacionamento.esquerda.cardinalidade %>"
+			targetArrow	"<%= figura relacionamento.direita.cardinalidade %>"
+      label "<%= relacionamento.texto %>"
+		]
+	]
+<% end %>
+]
