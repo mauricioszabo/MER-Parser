@@ -1,85 +1,85 @@
 #!/usr/bin/ruby
 require 'erb'
 
-TEMPLATE_DIR = File.expand_path(File.join(File.dirname(__FILE__), "templates"))
-TAMANHO_FONTE = 10
+class Model
+  attr_reader :name, :attributes 
 
-class Modelo
-  attr_reader :nome, :atributos 
-  def initialize(nome)
-    @nome = nome
-    @atributos = []
+  def initialize(name)
+    @name = name
+    @attributes = []
   end
 
-  def <<(atributo)
-    if(atributo[0..1] == '++')
-      @atributos << atributo[2..-1] + ": chave primária"
-    elsif(atributo[0] == ?+)
-      @atributos << atributo[1..-1] + ": chave"
+  def <<(attribute)
+    if(attribute[0..1] == '++')
+      @attributes << attribute[2..-1] + " [primary key]"
+    elsif(attribute[0] == ?+)
+      @attributes << attribute[1..-1] + " [key]"
     else
-      @atributos << atributo
+      @attributes << attribute
     end
   end
 end
 
-class Relacionamento < Struct.new(:direita, :esquerda, :texto)
-  Lado = Struct.new(:nome, :cardinalidade)
+class Relationship < Struct.new(:right, :left, :text)
+  Side = Struct.new(:name, :cardinality)
   def initialize(params)
-    self.esquerda = Lado.new
-    self.direita = Lado.new
+    self.left = Side.new
+    self.right = Side.new
 
-    self.texto = params[:texto]
+    self.text = params[:text]
 
-    self.esquerda.nome = params[:esquerda]
-    self.direita.nome = params[:direita]
+    self.left.name = params[:left]
+    self.right.name = params[:right]
 
-    self.esquerda.cardinalidade = params[:c_esquerda]
-    self.direita.cardinalidade = params[:c_direita]
+    self.left.cardinality = params[:c_left]
+    self.right.cardinality = params[:c_right]
   end
 end
 
 class Parser
-  def initialize(formato, arquivo)
-    @formato = formato
+  TEMPLATE_DIR = File.expand_path(File.join(File.dirname(__FILE__), "templates"))
 
-    @modelos = []
-    @relacionamentos = []
+  def initialize(format, arquivo)
+    @format = format
 
-    arquivo.each_line do |linha|
-      linha.strip!
+    @models = []
+    @relationships = []
 
-      if(linha.empty?)
-        @modelo = nil
+    arquivo.each_line do |line|
+      line.strip!
+
+      if(line.empty?)
+        @model = nil
       else
-        if(linha[-1] == ?:)
-          @modelo = Modelo.new(linha[0..-2])
-          @modelos ||= []
-          @modelos << @modelo
+        if(line[-1] == ?:)
+          @model = Model.new(line[0..-2])
+          @models ||= []
+          @models << @model
         else
-          if @modelo
-            @modelo << linha
+          if @model
+            @model << line
           else
-            relacionamento(linha)
+            relationship(line)
           end
         end
       end
     end
   end
 
-  def parse
-    erb = ERB.new(File.read("#{TEMPLATE_DIR}/#@formato.erb"))
-    erb.result(binding)
-  end
-
-  private
-  def relacionamento(linha)
-    linha = linha.split /\s+/
-    cardinalidade = linha[1].split /\s*-\s*/
-    @relacionamentos << Relacionamento.new(
-      :esquerda => linha[0], :c_esquerda => cardinalidade[0],
-      :direita => linha[2], :c_direita => cardinalidade[-1],
-      :texto => linha[3..-1].join(" ")
+  def relationship(line)
+    line = line.split /\s+/
+    cardinality = line[1].split /\s*-\s*/
+    @relationships << Relationship.new(
+      :left => line[0], :c_left => cardinality[0],
+      :right => line[2], :c_right => cardinality[-1],
+      :text => line[3..-1].join(" ")
     )
+  end
+  private :relationship
+
+  def parse
+    erb = ERB.new(File.read("#{TEMPLATE_DIR}/#@format.erb"))
+    erb.result(binding)
   end
 end
 
@@ -89,6 +89,7 @@ if(__FILE__ == $0)
   elsif(ARGV.size == 2)
     puts Parser.new(ARGV[0], File.read(ARGV[1])).parse
   else
-    puts "#{$0} <formato> <arquivo>"
+    puts "#{$0} <format> [<file>]
+      if <file> is not given, it will read from STDIN."
   end
 end

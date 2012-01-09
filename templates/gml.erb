@@ -5,20 +5,20 @@ graph
 	hierarchic	1
 	label	""
 	directed	1
-  <% @modelos.each do |modelo| %>
+  <% @models.each do |model| %>
 	node
 	[
-		id	"<%= modelo.nome %>"
-		label	"<%= modelo.nome %>
-<%= '-' * modelo.nome.size %>
-<%= modelo.atributos.join("\n") %>
+		id	"<%= model.name %>"
+		label	"<%= model.name %>
+<%= '-' * model.name.size %>
+<%= model.attributes.join("\n") %>
 "
 		graphics
 		[
 			x	414.0
 			y	120.5
-			w	<%= 7 * ((modelo.atributos + [modelo.nome]).max_by { |a| a.size }.size + 1) %>
-			h	<%= 16 * (modelo.atributos.size + 2) %>
+			w	<%= 7 * ((model.attributes + [model.name]).max_by { |a| a.size }.size + 1) %>
+			h	<%= 16 * (model.attributes.size + 2) %>
 			type	"rectangle"
 			fill	"#FFCC00"
 			outline	"#000000"
@@ -33,7 +33,7 @@ graph
   <% end %>
 
 <% 
-  def figura(card)
+  def arrow(card)
     if(card == '1')
       'dash'
     else
@@ -41,17 +41,17 @@ graph
     end
   end
 
-@relacionamentos.each do |relacionamento| %>
+@relationships.each do |relationship| %>
 	edge
 	[
-		source	"<%= relacionamento.esquerda.nome %>"
-		target	"<%= relacionamento.direita.nome %>"
+		source	"<%= relationship.left.name %>"
+		target	"<%= relationship.right.name %>"
 		graphics
 		[
 			fill	"#000000"
-			sourceArrow	"<%= figura relacionamento.esquerda.cardinalidade %>"
-			targetArrow	"<%= figura relacionamento.direita.cardinalidade %>"
-      label "<%= relacionamento.texto %>"
+			sourceArrow	"<%= arrow relationship.left.cardinality %>"
+			targetArrow	"<%= arrow relationship.right.cardinality %>"
+      label "<%= relationship.text %>"
 		]
 	]
 <% end %>

@@ -1,13 +1,13 @@
 digraph mer {
 	graph[overlap=false, splines=true]
 
-<% @modelos.each do |modelo| %>
-	"<%= modelo.nome %>" [shape=Mrecord, fontsize=10, label="{<%= modelo.nome %>|<%= modelo.atributos.join("\\l") %>}"]
+<% @models.each do |model| %>
+	"<%= model.name %>" [shape=Mrecord, fontsize=10, label="{<%= model.name %>|<%= model.attributes.join("\\l") %>}"]
 <% end %>
 
 	edge [len="2"]
 <%
-  def figura(card)
+  def arrow(card)
     if(card == '1')
       'otee'
     else
@@ -15,10 +15,10 @@ digraph mer {
     end
   end
   
-@relacionamentos.each do |relacionamento| %>
-	"<%= relacionamento.direita.nome %>" -> "<%= relacionamento.esquerda.nome %>" [arrowtail=<%= 
-  figura(relacionamento.direita.cardinalidade) %>, arrowhead=<%= 
-  figura(relacionamento.esquerda.cardinalidade) %>, dir=both, fontsize=10 label="<%= 
-  relacionamento.texto %>"]
+@relationships.each do |relationship| %>
+	"<%= relationship.right.name %>" -> "<%= relationship.left.name %>" [arrowtail=<%= 
+  arrow(relationship.right.cardinality) %>, arrowhead=<%= 
+  arrow(relationship.left.cardinality) %>, dir=both, fontsize=10 label="<%= 
+  relationship.text %>"]
 <% end %>
 }
